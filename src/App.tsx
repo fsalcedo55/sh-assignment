@@ -30,6 +30,10 @@ import {
 import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group"
 import { Label } from "./components/ui/label"
 import { Switch } from "./components/ui/switch"
+import { LuClock8 } from "react-icons/lu"
+import { IoDocumentText } from "react-icons/io5"
+import { MdOutlineDeleteForever } from "react-icons/md"
+import { useState } from "react"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -40,6 +44,7 @@ const formSchema = z.object({
 const formLabelStyles = "text-xs font-bold"
 
 function App() {
+  const [docData, setDocData] = useState<string | undefined>(undefined)
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,6 +60,10 @@ function App() {
     console.log(values)
   }
   // ...
+
+  function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setDocData(e.target.files?.item(0)?.name)
+  }
 
   return (
     <>
@@ -105,11 +114,13 @@ function App() {
                       </FormItem>
                     )}
                   />
+                  <div className="h-2"></div>
                   <Divider />
                   <div>
                     <FormLabel className={formLabelStyles}>
                       Select a manifest you'd like to import
                     </FormLabel>
+                    <div className="h-2"></div>
                     <FormField
                       control={form.control}
                       name="username"
@@ -118,39 +129,56 @@ function App() {
                           <FormControl>
                             <div className="border p-4 rounded-2xl">
                               <div className="max-w-xl">
-                                <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
-                                  <span className="flex items-center space-x-2">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="w-6 h-6 text-gray-600"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                      stroke-width="2"
+                                {docData && (
+                                  <div className="flex justify-between items-center text-gray-600 w-full">
+                                    <div className="font-bold text-xs">
+                                      {docData}
+                                    </div>
+                                    <div
+                                      className="text-2xl text-red-500 cursor-pointer"
+                                      onClick={() => setDocData(undefined)}
                                     >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                      <MdOutlineDeleteForever />
+                                    </div>
+                                  </div>
+                                )}
+                                {!docData && (
+                                  <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+                                    <div className="flex items-center flex-col justify-center gap-2 w-full">
+                                      <div className="text-[#F79C26] text-2xl">
+                                        <IoDocumentText />
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        Drag & Drop Here Or{""}
+                                        <span className="text-blue-600 font-bold px-1">
+                                          Browse
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <input
+                                      type="file"
+                                      name="file_upload"
+                                      className="hidden"
+                                      onChange={handleOnChange}
+                                    />
+                                  </label>
+                                )}
+                              </div>
+                              {!docData && (
+                                <div className="flex justify-center pt-4">
+                                  <Button size="sm">
+                                    <label className="cursor-pointer">
+                                      Upload Manifest
+                                      <input
+                                        type="file"
+                                        name="file_upload"
+                                        className="hidden"
+                                        onChange={handleOnChange}
                                       />
-                                    </svg>
-                                    <span className="font-medium text-gray-600">
-                                      Drag & Drop Here Or{""}
-                                      <span className="text-blue-600 underline px-1">
-                                        Browse
-                                      </span>
-                                    </span>
-                                  </span>
-                                  <input
-                                    type="file"
-                                    name="file_upload"
-                                    className="hidden"
-                                  />
-                                </label>
-                              </div>
-                              <div className="flex justify-center pt-4">
-                                <Button size="sm">Upload Manifest</Button>
-                              </div>
+                                    </label>
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           </FormControl>
                         </FormItem>
@@ -175,7 +203,10 @@ function App() {
                         </Label>
                       </div>
                       {" | "}
-                      <div>
+                      <div className="flex items-center gap-1">
+                        <div className="text-xl rotate-[270deg]">
+                          <LuClock8 />
+                        </div>
                         <Label className="text-xs">
                           Select Tolerance Level
                         </Label>
@@ -210,6 +241,7 @@ function App() {
                       </FormItem>
                     )}
                   />
+                  <div className="h-3"></div>
                   <Divider fullWidth />
 
                   <LabelFull
@@ -244,9 +276,8 @@ function App() {
                       </FormItem>
                     )}
                   />
-                  <Divider fullWidth />
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-4 mt-8">
                     {Array(4)
                       .fill(null)
                       .map((_, i) => (
@@ -263,7 +294,7 @@ function App() {
                               <FormItem>
                                 <FormControl>
                                   <div>
-                                    <div>
+                                    <div className="flex items-center gap-2">
                                       <Select>
                                         <SelectTrigger className="w-[140px] text-xs">
                                           <SelectValue placeholder="Select Client:" />
@@ -274,8 +305,10 @@ function App() {
                                           </SelectItem>
                                         </SelectContent>
                                       </Select>
+                                      <div className="text-xl rotate-[270deg]">
+                                        <LuClock8 />
+                                      </div>
                                     </div>
-                                    <div></div>
                                   </div>
                                 </FormControl>
                               </FormItem>
@@ -315,7 +348,7 @@ interface DividerProps {
 
 function Divider({ fullWidth }: DividerProps) {
   return (
-    <div className="relative h-8">
+    <div className="relative h-4">
       <div className="absolute inset-0 flex items-center" aria-hidden="true">
         <div className="w-[1%] border-t border-gray-800" />
         {fullWidth ? (
