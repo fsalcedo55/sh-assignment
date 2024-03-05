@@ -33,7 +33,9 @@ import { Switch } from "./components/ui/switch"
 import { LuClock8 } from "react-icons/lu"
 import { IoDocumentText } from "react-icons/io5"
 import { MdOutlineDeleteForever } from "react-icons/md"
-import { useState } from "react"
+// import { useState } from "react"
+import { useDropzone } from "react-dropzone"
+import { useCallback, useState } from "react"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -43,8 +45,23 @@ const formSchema = z.object({
 
 const formLabelStyles = "text-xs font-bold"
 
+interface File {
+  name: string
+  preview: string
+}
+
 function App() {
-  const [docData, setDocData] = useState<string | undefined>(undefined)
+  const [docData, setDocData] = useState<File | undefined>(undefined)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onDrop = useCallback((acceptedFiles: any) => {
+    setDocData(
+      Object.assign(acceptedFiles[0], {
+        preview: URL.createObjectURL(acceptedFiles[0]),
+      })
+    )
+  }, [])
+  const { getRootProps, getInputProps } = useDropzone({ onDrop })
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,9 +78,11 @@ function App() {
   }
   // ...
 
-  function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setDocData(e.target.files?.item(0)?.name)
-  }
+  // function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+  //   setDocData(e.target.files?.item(0)?.name)
+  // }
+
+  console.log("docData: ", docData && docData)
 
   return (
     <>
@@ -121,6 +140,7 @@ function App() {
                       Select a manifest you'd like to import
                     </FormLabel>
                     <div className="h-2"></div>
+
                     <FormField
                       control={form.control}
                       name="username"
@@ -129,10 +149,14 @@ function App() {
                           <FormControl>
                             <div className="border p-4 rounded-2xl">
                               <div className="max-w-xl">
-                                {docData && (
-                                  <div className="flex justify-between items-center text-gray-600 w-full">
+                                {docData != undefined ? (
+                                  <div className="flex justify-between items-center text-gray-600 w-full gap-2">
+                                    <img
+                                      className=" object-cover h-24 w-24 rounded"
+                                      src={docData.preview}
+                                    />
                                     <div className="font-bold text-xs">
-                                      {docData}
+                                      {docData.name}
                                     </div>
                                     <div
                                       className="text-2xl text-red-500 cursor-pointer"
@@ -141,41 +165,46 @@ function App() {
                                       <MdOutlineDeleteForever />
                                     </div>
                                   </div>
-                                )}
-                                {!docData && (
-                                  <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
-                                    <div className="flex items-center flex-col justify-center gap-2 w-full">
-                                      <div className="text-[#F79C26] text-2xl">
-                                        <IoDocumentText />
-                                      </div>
-                                      <div className="text-xs text-gray-600">
-                                        Drag & Drop Here Or{""}
-                                        <span className="text-blue-600 font-bold px-1">
-                                          Browse
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <input
-                                      type="file"
-                                      name="file_upload"
-                                      className="hidden"
-                                      onChange={handleOnChange}
-                                    />
-                                  </label>
-                                )}
-                              </div>
-                              {!docData && (
-                                <div className="flex justify-center pt-4">
-                                  <Button size="sm">
-                                    <label className="cursor-pointer">
-                                      Upload Manifest
+                                ) : (
+                                  <div>
+                                    <div {...getRootProps()}>
                                       <input
+                                        {...getInputProps()}
                                         type="file"
                                         name="file_upload"
                                         className="hidden"
-                                        onChange={handleOnChange}
                                       />
-                                    </label>
+                                      <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+                                        <div className="flex items-center flex-col justify-center gap-2 w-full">
+                                          <div className="text-[#F79C26] text-2xl">
+                                            <IoDocumentText />
+                                          </div>
+                                          <div className="text-xs text-gray-600">
+                                            Drag & Drop Here Or{""}
+                                            <span className="text-blue-600 font-bold px-1">
+                                              Browse
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </label>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              {docData === undefined && (
+                                <div className="flex justify-center pt-4">
+                                  <Button size="sm">
+                                    <div {...getRootProps()}>
+                                      <input
+                                        {...getInputProps()}
+                                        type="file"
+                                        name="file_upload"
+                                        className="hidden"
+                                      />
+                                      <label className="cursor-pointer">
+                                        Upload Manifest
+                                      </label>
+                                    </div>
                                   </Button>
                                 </div>
                               )}
