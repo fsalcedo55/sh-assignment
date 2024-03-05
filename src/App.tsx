@@ -33,7 +33,6 @@ import { Switch } from "./components/ui/switch"
 import { LuClock8 } from "react-icons/lu"
 import { IoDocumentText } from "react-icons/io5"
 import { MdOutlineDeleteForever } from "react-icons/md"
-// import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { useCallback, useState } from "react"
 
@@ -43,7 +42,7 @@ const formSchema = z.object({
   }),
 })
 
-const formLabelStyles = "text-xs font-bold"
+const formLabelStyles = "text-xs font-extrabold text-[#233C6B]"
 
 interface File {
   name: string
@@ -52,6 +51,7 @@ interface File {
 
 function App() {
   const [docData, setDocData] = useState<File | undefined>(undefined)
+  const [toggleChecked, setToggleChecked] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDrop = useCallback((acceptedFiles: any) => {
     setDocData(
@@ -78,8 +78,6 @@ function App() {
   }
   // ...
 
-  console.log("docData: ", docData && docData)
-
   return (
     <>
       <Dialog>
@@ -93,7 +91,7 @@ function App() {
             <DialogTitle>
               <div className="flex justify-center">
                 <div className="flex flex-col w-[240px]">
-                  <div>Document Upload</div>
+                  <div className="text-[#233C6B]">Document Upload</div>
                   <div>
                     <Divider fullWidth />
                   </div>
@@ -189,7 +187,7 @@ function App() {
                               </div>
                               {docData === undefined && (
                                 <div className="flex justify-center pt-4">
-                                  <Button size="sm">
+                                  <Button>
                                     <div {...getRootProps()}>
                                       <input
                                         {...getInputProps()}
@@ -221,10 +219,16 @@ function App() {
                       Tolerance Window:
                     </FormLabel>
                     <div className="flex gap-2 items-center">
-                      <div className="flex items-center space-x-2">
-                        <Switch id="airplane-mode" />
-                        <Label htmlFor="airplane-mode" className="text-xs">
-                          Toggle Mode
+                      <div className="flex items-center space-x-2 w-[118px]">
+                        <Switch
+                          id="toggle-mode"
+                          // checked={toggleChecked}
+                          onCheckedChange={() =>
+                            setToggleChecked(!toggleChecked)
+                          }
+                        />
+                        <Label htmlFor="toggle-mode" className="text-xs">
+                          Toggle {toggleChecked ? "ON" : "OFF"}
                         </Label>
                       </div>
                       {" | "}
@@ -247,7 +251,7 @@ function App() {
                     render={() => (
                       <FormItem>
                         <FormControl>
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-8">
                             <FormLabel className={formLabelStyles}>
                               Split schedule using social distancing?
                             </FormLabel>
@@ -282,7 +286,7 @@ function App() {
                     render={() => (
                       <FormItem>
                         <FormControl>
-                          <div>
+                          <div className="flex flex-col gap-8">
                             <FormLabel className={formLabelStyles}>
                               Client:
                             </FormLabel>
@@ -310,7 +314,9 @@ function App() {
                           key={i}
                           className="flex items-center justify-between"
                         >
-                          <p className="text-xs">Testing Center {i + 1}</p>
+                          <p className="text-xs text-[#233C6B]">
+                            Testing Center {i + 1}
+                          </p>
 
                           <FormField
                             control={form.control}
@@ -346,7 +352,7 @@ function App() {
               </div>
 
               <DialogFooter>
-                <div className="font-bold">
+                <div className="font-bold text-[#233C6B]">
                   Data in the import file is correct. Please press Continue to
                   import.
                 </div>
@@ -393,7 +399,7 @@ interface LabelProps {
 
 function LabelFull({ labelName, description }: LabelProps) {
   return (
-    <div>
+    <div className="mb-2">
       <FormLabel className={formLabelStyles}>{labelName}</FormLabel>
       <div className="text-xs font-bold text-green-500">{description}</div>
     </div>
