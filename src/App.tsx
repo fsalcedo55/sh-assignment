@@ -78,10 +78,6 @@ function App() {
   }
   // ...
 
-  // function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
-  //   setDocData(e.target.files?.item(0)?.name)
-  // }
-
   console.log("docData: ", docData && docData)
 
   return (
