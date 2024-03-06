@@ -221,7 +221,7 @@ export function UploadDocumentForm() {
               render={() => (
                 <FormItem>
                   <FormControl>
-                    <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-5">
                       <FormLabel className={formLabelStyles}>
                         Split schedule using social distancing?
                       </FormLabel>
@@ -256,7 +256,7 @@ export function UploadDocumentForm() {
               render={() => (
                 <FormItem>
                   <FormControl>
-                    <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-5">
                       <FormLabel className={formLabelStyles}>Client:</FormLabel>
                       <RadioGroup>
                         <div className="flex items-center space-x-2">
