@@ -29,9 +29,11 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 import { Divider } from "./ui/divider"
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  importName: z.string().min(1),
+  file_upload: z.string().min(1),
+  split_schedule: z.boolean(),
+  client: z.boolean(),
+  testing_center: z.string().min(1),
 })
 
 const formLabelStyles = "text-xs font-extrabold text-[#233C6B]"
@@ -58,7 +60,11 @@ export function UploadDocumentForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      importName: "",
+      file_upload: "",
+      split_schedule: false,
+      client: false,
+      testing_center: "",
     },
   })
 
@@ -78,7 +84,7 @@ export function UploadDocumentForm() {
           <div className="w-3/5">
             <FormField
               control={form.control}
-              name="username"
+              name="importName"
               render={() => (
                 <FormItem>
                   <FormControl>
@@ -89,11 +95,12 @@ export function UploadDocumentForm() {
                             <SelectValue placeholder="Select Import Name:" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
+                            <SelectItem value="name1">Name 1</SelectItem>
+                            <SelectItem value="name2">Name 2</SelectItem>
+                            <SelectItem value="name3">Name 3</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-                      <div></div>
                     </div>
                   </FormControl>
                 </FormItem>
@@ -109,7 +116,7 @@ export function UploadDocumentForm() {
 
               <FormField
                 control={form.control}
-                name="username"
+                name="file_upload"
                 render={() => (
                   <FormItem>
                     <FormControl>
@@ -132,28 +139,26 @@ export function UploadDocumentForm() {
                               </div>
                             </div>
                           ) : (
-                            <div>
-                              <div {...getRootProps()}>
-                                <input
-                                  {...getInputProps()}
-                                  type="file"
-                                  name="file_upload"
-                                  className="hidden"
-                                />
-                                <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
-                                  <div className="flex items-center flex-col justify-center gap-2 w-full">
-                                    <div className="text-[#F79C26] text-2xl">
-                                      <IoDocumentText />
-                                    </div>
-                                    <div className="text-xs text-gray-600">
-                                      Drag & Drop Here Or{""}
-                                      <span className="text-blue-600 font-bold px-1">
-                                        Browse
-                                      </span>
-                                    </div>
+                            <div {...getRootProps()}>
+                              <input
+                                {...getInputProps()}
+                                type="file"
+                                name="file_upload"
+                                className="hidden"
+                              />
+                              <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+                                <div className="flex items-center flex-col justify-center gap-2 w-full">
+                                  <div className="text-[#F79C26] text-2xl">
+                                    <IoDocumentText />
                                   </div>
-                                </label>
-                              </div>
+                                  <div className="text-xs text-gray-600">
+                                    Drag & Drop Here Or{""}
+                                    <span className="text-blue-600 font-bold px-1">
+                                      Browse
+                                    </span>
+                                  </div>
+                                </div>
+                              </label>
                             </div>
                           )}
                         </div>
@@ -214,7 +219,7 @@ export function UploadDocumentForm() {
           <div className="w-2/5">
             <FormField
               control={form.control}
-              name="username"
+              name="split_schedule"
               render={() => (
                 <FormItem>
                   <FormControl>
@@ -222,13 +227,13 @@ export function UploadDocumentForm() {
                       <FormLabel className={formLabelStyles}>
                         Split schedule using social distancing?
                       </FormLabel>
-                      <RadioGroup defaultValue="comfortable">
+                      <RadioGroup>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="default" id="r1" />
+                          <RadioGroupItem value="true" id="r1" />
                           <Label htmlFor="r1">Yes</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="comfortable" id="r2" />
+                          <RadioGroupItem value="false" id="r2" />
                           <Label htmlFor="r2">No</Label>
                         </div>
                       </RadioGroup>
@@ -249,19 +254,19 @@ export function UploadDocumentForm() {
 
             <FormField
               control={form.control}
-              name="username"
+              name="client"
               render={() => (
                 <FormItem>
                   <FormControl>
                     <div className="flex flex-col gap-8">
                       <FormLabel className={formLabelStyles}>Client:</FormLabel>
-                      <RadioGroup defaultValue="comfortable">
+                      <RadioGroup>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="default" id="r1" />
+                          <RadioGroupItem value="single" id="r1" />
                           <Label htmlFor="r1">Single</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="comfortable" id="r2" />
+                          <RadioGroupItem value="multiple" id="r2" />
                           <Label htmlFor="r2">Multiple</Label>
                         </div>
                       </RadioGroup>
@@ -282,7 +287,7 @@ export function UploadDocumentForm() {
 
                     <FormField
                       control={form.control}
-                      name="username"
+                      name="testing_center"
                       render={() => (
                         <FormItem>
                           <FormControl>
