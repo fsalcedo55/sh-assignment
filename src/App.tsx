@@ -9,10 +9,12 @@ import {
 } from "./components/ui/dialog"
 import { Divider } from "./components/ui/divider"
 import { UploadDocumentForm } from "./components/uploadDocumentForm"
+import { Toaster } from "sonner"
 
 function App() {
   return (
     <>
+      <Toaster richColors />
       <Dialog>
         <div className="flex justify-center items-center h-screen w-full">
           <DialogTrigger>

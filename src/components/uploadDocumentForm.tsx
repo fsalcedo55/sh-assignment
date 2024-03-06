@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { MdOutlineDeleteForever } from "react-icons/md"
 import { IoDocumentText } from "react-icons/io5"
@@ -28,6 +28,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { DialogClose, DialogFooter } from "./ui/dialog"
 import { Divider } from "./ui/divider"
 import { Progress } from "./ui/progress"
+import { toast } from "sonner"
 
 const formSchema = z.object({
   importName: z.string().min(1),
@@ -50,25 +51,31 @@ export function UploadDocumentForm() {
   const [progressCount, setProgressCount] = useState(0)
 
   function countTo100() {
-    let count = 1
-    const interval = setInterval(() => {
-      setProgressCount(count)
-      if (count === 100) {
-        clearInterval(interval)
-      }
-      count++
-    }, 40)
+    return new Promise<void>((resolve) => {
+      let count = 1
+      const interval = setInterval(() => {
+        setProgressCount(count)
+        if (count === 100) {
+          clearInterval(interval)
+          resolve()
+        }
+        count++
+      }, 40)
+    })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onDrop = useCallback((acceptedFiles: any) => {
-    countTo100()
-    setDocData(
-      Object.assign(acceptedFiles[0], {
-        preview: URL.createObjectURL(acceptedFiles[0]),
-      })
-    )
-  }, [])
+  const onDrop =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (acceptedFiles: any) => {
+      await countTo100()
+      setDocData(
+        Object.assign(acceptedFiles[0], {
+          preview: URL.createObjectURL(acceptedFiles[0]),
+        })
+      )
+      toast.success("Document has been uploaded")
+    }
+
   const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
   // 1. Define your form.
@@ -88,13 +95,14 @@ export function UploadDocumentForm() {
   function onSubmit() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("hii")
+    toast.success("Thank you for submitting the form! 🎉")
   }
   // ...
 
   function deletePreview() {
     setDocData(undefined)
     setProgressCount(0)
+    toast.error("Document has been deleted")
   }
 
   return (
