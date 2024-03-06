@@ -7,6 +7,13 @@ This project is a React-based application developed as part of a coding assignme
 - Exact replica of the provided mockup
 - Drag & drop functionality to upload a file and display the filename and image
 
+## Technologies Used
+
+- React.js
+- Vite
+- Tailwind CSS
+- shadcn/ui
+
 ## Getting Started
 
 To get a local copy up and running, follow these simple steps:
