@@ -164,19 +164,17 @@ export function UploadDocumentForm() {
                         </div>
                         {docData === undefined && (
                           <div className="flex justify-center pt-4">
-                            <Button>
-                              <div {...getRootProps()}>
-                                <input
-                                  {...getInputProps()}
-                                  type="file"
-                                  name="file_upload"
-                                  className="hidden"
-                                />
-                                <label className="cursor-pointer">
-                                  Upload Manifest
-                                </label>
-                              </div>
-                            </Button>
+                            <div {...getRootProps()}>
+                              <input
+                                {...getInputProps()}
+                                type="file"
+                                name="file_upload"
+                                className="hidden"
+                              />
+                              <label>
+                                <Button>Upload Manifest</Button>
+                              </label>
+                            </div>
                           </div>
                         )}
                       </div>
