@@ -27,6 +27,7 @@ import { LuClock8 } from "react-icons/lu"
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { DialogClose, DialogFooter } from "./ui/dialog"
 import { Divider } from "./ui/divider"
+import { Progress } from "./ui/progress"
 
 const formSchema = z.object({
   importName: z.string().min(1),
@@ -46,8 +47,22 @@ interface File {
 export function UploadDocumentForm() {
   const [docData, setDocData] = useState<File | undefined>(undefined)
   const [toggleChecked, setToggleChecked] = useState(false)
+  const [progressCount, setProgressCount] = useState(0)
+
+  function countTo100() {
+    let count = 1
+    const interval = setInterval(() => {
+      setProgressCount(count)
+      if (count === 100) {
+        clearInterval(interval)
+      }
+      count++
+    }, 40)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDrop = useCallback((acceptedFiles: any) => {
+    countTo100()
     setDocData(
       Object.assign(acceptedFiles[0], {
         preview: URL.createObjectURL(acceptedFiles[0]),
@@ -69,12 +84,18 @@ export function UploadDocumentForm() {
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function onSubmit() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    console.log("hii")
   }
   // ...
+
+  function deletePreview() {
+    setDocData(undefined)
+    setProgressCount(0)
+  }
 
   return (
     <Form {...form}>
@@ -122,7 +143,16 @@ export function UploadDocumentForm() {
                     <FormControl>
                       <div className="border p-4 rounded-2xl">
                         <div className="max-w-xl">
-                          {docData != undefined ? (
+                          {progressCount < 100 && progressCount != 0 && (
+                            <div>
+                              Upload
+                              <Progress value={progressCount} />
+                              <div className="text-sm text-gray-500">
+                                In progress | {progressCount}%
+                              </div>
+                            </div>
+                          )}
+                          {docData != undefined && progressCount === 100 && (
                             <div className="flex justify-between items-center text-gray-600 w-full gap-2">
                               <img
                                 className=" object-cover h-24 w-24 rounded"
@@ -133,12 +163,13 @@ export function UploadDocumentForm() {
                               </div>
                               <div
                                 className="text-2xl text-red-500 cursor-pointer"
-                                onClick={() => setDocData(undefined)}
+                                onClick={deletePreview}
                               >
                                 <MdOutlineDeleteForever />
                               </div>
                             </div>
-                          ) : (
+                          )}
+                          {progressCount === 0 && (
                             <div {...getRootProps()}>
                               <input
                                 {...getInputProps()}
@@ -319,7 +350,11 @@ export function UploadDocumentForm() {
             Data in the import file is correct. Please press Continue to import.
           </div>
           <div className="justify-center gap-4 flex">
-            <Button type="submit">Continue Import</Button>
+            <DialogClose asChild>
+              <Button onClick={onSubmit} type="submit">
+                Continue Import
+              </Button>
+            </DialogClose>
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancel
