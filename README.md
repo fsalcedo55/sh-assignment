@@ -6,6 +6,8 @@ This project is a React-based application developed as part of a coding assignme
 
 - Exact replica of the provided mockup
 - Drag & drop functionality to upload a file and display the filename and image
+- Upload progress bar for the drag and drop image
+- Toast notifications for user interactions
 
 ## Technologies Used
 
@@ -37,6 +39,8 @@ npm run dev
 ```
 
 ## Screenshot
+
+<video controls src="2024-03-06 19-00-17.mp4" title="Title"></video>
 
 ![skyhop react assignment](image.png)
 
